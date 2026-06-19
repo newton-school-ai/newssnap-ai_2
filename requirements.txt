@@ -17,7 +17,7 @@ redis==5.0.8
 aioredis==2.0.1
 
 # Agent Orchestration
-langgraph==0.2.0
+langgraph==0.2.20
 langchain-groq==0.2.0
 langchain-core==0.3.0
 
