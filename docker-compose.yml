@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     volumes:
-      # - .:/app
+      - .:/app
       - snap_data:/app/data/snaps
     depends_on:
       db:
