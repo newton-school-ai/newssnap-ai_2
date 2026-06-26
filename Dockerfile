@@ -1,4 +1,4 @@
-FROM python:3.11-slim as base
+FROM python:3.11-slim-bookworm as base
 
 WORKDIR /app
 
@@ -13,8 +13,9 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers
-RUN playwright install chromium && playwright install-deps chromium
+# Install Playwright browsers (will be enabled in M2 Issue 5)
+# ENV PLAYWRIGHT_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries/playwright
+# RUN playwright install chromium && playwright install-deps chromium
 
 # Copy source code
 COPY . .
