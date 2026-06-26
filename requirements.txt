@@ -17,9 +17,9 @@ redis==5.0.8
 aioredis==2.0.1
 
 # Agent Orchestration
-langgraph==0.2.0
-langchain-groq==0.2.0
-langchain-core==0.3.0
+langgraph
+langchain-groq
+langchain-core
 
 # News Scraping
 playwright==1.47.0
