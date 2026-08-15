@@ -19,12 +19,12 @@ def override_get_db():
     yield mock_db_session
 
 
-app.dependency_overrides[get_db] = override_get_db
-
-
 @pytest.fixture(autouse=True)
 def reset_mock():
     mock_db_session.reset_mock()
+    app.dependency_overrides[get_db] = override_get_db
+    yield
+    app.dependency_overrides.pop(get_db, None)
 
 
 def test_google_login_redirect():
