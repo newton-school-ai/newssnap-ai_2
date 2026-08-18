@@ -1,0 +1,15 @@
+{
+  "width": 1080,
+  "height": 1920,
+  "bg_color": "#FFFFFF",
+  "lead_image_height": 608,
+  "padding": 60,
+  "category_font_size": 40,
+  "category_color": "#FFFFFF",
+  "category_bg": "#FF3B30",
+  "summary_font_size_max": 72,
+  "summary_font_size_min": 40,
+  "summary_color": "#1C1C1E",
+  "source_font_size": 36,
+  "source_color": "#8E8E93"
+}
