@@ -6,6 +6,7 @@ import os
 from PIL import Image, ImageDraw
 
 from src.snaps.image_handler import ImageHandler
+from src.utils.cache import invalidate_feed_cache
 from src.utils.image_utils import fit_text_to_box, get_font_for_language
 
 
@@ -93,5 +94,8 @@ class SnapGenerator:
             draw.text((padding, y_text), line, font=sum_font, fill=self.template["summary_color"])
             bbox = draw.textbbox((0, 0), line, font=sum_font)
             y_text += (bbox[3] - bbox[1]) + int(sum_font.size * 0.3)
+
+        # Invalidate cached feed so newly generated snap shows up in user feeds
+        invalidate_feed_cache()
 
         return img
