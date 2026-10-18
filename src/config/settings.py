@@ -86,13 +86,18 @@ class Settings(BaseSettings):
     SUPPORTED_LANGUAGES: list[str] = ["en", "hi", "ta", "te", "kn"]
     TRANSLATION_TIMEOUT_SECONDS: float = 10.0
 
+    # Meilisearch
+    MEILISEARCH_URL: str = "http://localhost:7700"
+    MEILISEARCH_API_KEY: str = "newssnap_master_key"
+    MEILISEARCH_INDEX_NAME: str = "articles"
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @model_validator(mode="after")
     def adjust_docker_urls(self) -> "Settings":
         # Check if we are running outside a Docker container (locally on host macOS)
         if not os.path.exists("/.dockerenv") and not os.environ.get("DOCKER_CONTAINER"):
-            for field in ("DATABASE_URL", "REDIS_URL"):
+            for field in ("DATABASE_URL", "REDIS_URL", "MEILISEARCH_URL"):
                 val = getattr(self, field, None)
                 if val:
                     try:

@@ -243,6 +243,8 @@ class ScrapePipeline:
         inserted = 0
         duplicates = 0
 
+        inserted_articles: List[Article] = []
+
         for item in articles:
             # Check for existing article by source_url (duplicate check)
             existing = db.query(Article).filter(Article.source_url == item.source_url).first()
@@ -278,11 +280,23 @@ class ScrapePipeline:
                 author=item.author,
                 is_duplicate=False,
             )
+            # Associate relationships so indexer has them without re-querying
+            new_article.source = db_source
+            new_article.category = cat
+
             db.add(new_article)
+            inserted_articles.append(new_article)
             inserted += 1
 
         try:
             db.commit()
+            if inserted_articles:
+                try:
+                    from src.search.indexer import search_indexer
+
+                    search_indexer.index_batch(inserted_articles)
+                except Exception as e:
+                    logger.debug(f"Auto-indexing articles for {source_slug} skipped: {e}")
         except Exception as e:
             db.rollback()
             logger.error(f"Error committing articles for {source_slug}: {e}")
