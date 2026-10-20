@@ -41,17 +41,17 @@ CLICKBAIT_PATTERNS = [
 # ---------------------------------------------------------------------------
 CATEGORY_PROMPT_STYLES: Dict[str, str] = {
     "finance": (
-        "Focus on key financial figures, market movements, numbers, " "percentages, and their economic implications."
+        "Focus on key financial figures, market movements, numbers, percentages, and their economic implications."
     ),
-    "business": ("Focus on company names, deal values, strategic implications, " "and market impact."),
-    "sports": ("Focus on scores, players, teams, match results, and tournament " "standings."),
-    "politics": ("Include key quotes, decision-makers, policy changes, and their " "immediate political implications."),
-    "technology": ("Focus on the product or innovation, company behind it, and its " "practical impact on users."),
-    "health": ("Focus on health findings, affected populations, expert advice, " "and actionable insights."),
-    "science": ("Focus on the discovery, research institution, scientific " "significance, and broader implications."),
-    "crime": ("Focus on the incident, key parties involved, location, and legal " "proceedings."),
-    "international": ("Focus on countries involved, key decision-makers, geopolitical " "implications."),
-    "national": ("Focus on Indian context, government bodies, affected citizens, " "and policy outcomes."),
+    "business": ("Focus on company names, deal values, strategic implications, and market impact."),
+    "sports": ("Focus on scores, players, teams, match results, and tournament standings."),
+    "politics": ("Include key quotes, decision-makers, policy changes, and their immediate political implications."),
+    "technology": ("Focus on the product or innovation, company behind it, and its practical impact on users."),
+    "health": ("Focus on health findings, affected populations, expert advice, and actionable insights."),
+    "science": ("Focus on the discovery, research institution, scientific significance, and broader implications."),
+    "crime": ("Focus on the incident, key parties involved, location, and legal proceedings."),
+    "international": ("Focus on countries involved, key decision-makers, geopolitical implications."),
+    "national": ("Focus on Indian context, government bodies, affected citizens, and policy outcomes."),
 }
 DEFAULT_STYLE = "Be factual, specific, and objective. Preserve key who/what/when/where/why facts."
 
