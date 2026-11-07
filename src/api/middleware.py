@@ -48,24 +48,38 @@ def get_current_user(token: str | None = Depends(oauth2_scheme), db: Session = D
 
 
 def get_optional_current_user(token: str | None = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User | None:
-    """Dependency to get optional authenticated user. Returns None if unauthenticated."""
+    """Dependency to get the current authenticated user if a valid token is provided, or None otherwise."""
     if not token:
         return None
 
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
     payload = verify_token(token)
     if payload is None:
-        return None
+        raise credentials_exception
 
     user_id: str | None = payload.get("sub")
     if user_id is None:
-        return None
+        raise credentials_exception
 
     try:
         user_uuid = uuid.UUID(str(user_id)) if not isinstance(user_id, uuid.UUID) else user_id
-        user = db.query(User).filter(User.id == user_uuid).first()
-        if user and user.is_active:
-            return user
-    except Exception:
-        return None
+    except (ValueError, TypeError):
+        raise credentials_exception
 
-    return None
+    user = db.query(User).filter(User.id == user_uuid).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
+
+    return user

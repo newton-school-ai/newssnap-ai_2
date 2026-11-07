@@ -1,0 +1,22 @@
+{
+  "template_name": "politics",
+  "layout_type": "politics",
+  "width": 1080,
+  "height": 1920,
+  "bg_color": "#FFFFFF",
+  "lead_image_height": 560,
+  "padding": 60,
+  "category_font_size": 38,
+  "category_color": "#FFFFFF",
+  "category_bg": "#9B59B6",
+  "quote_banner_bg": "#F4ECF7",
+  "quote_banner_text_color": "#5B2C6F",
+  "quote_banner_border_color": "#D7BDE2",
+  "quote_font_size": 42,
+  "summary_font_size_max": 64,
+  "summary_font_size_min": 36,
+  "summary_color": "#1C1C1E",
+  "source_font_size": 34,
+  "source_color": "#8E8E93",
+  "accent_color": "#9B59B6"
+}

@@ -7,6 +7,7 @@ from src.api.admin import router as admin_router
 from src.api.auth import router as auth_router
 from src.api.categories import router as categories_router
 from src.api.comments import router as comments_router
+from src.api.feed import router as feed_router
 from src.api.interactions import router as interactions_router
 from src.api.sources import router as sources_router
 from src.api.stories import router as stories_router
@@ -34,6 +35,7 @@ app.include_router(sources_router)
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(stories_router)
+app.include_router(feed_router)
 app.include_router(interactions_router)
 app.include_router(comments_router)
 app.include_router(categories_router)
