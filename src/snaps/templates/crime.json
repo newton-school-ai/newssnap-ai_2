@@ -1,0 +1,22 @@
+{
+  "template_name": "crime",
+  "layout_type": "crime",
+  "width": 1080,
+  "height": 1920,
+  "bg_color": "#FFFFFF",
+  "lead_image_height": 560,
+  "padding": 60,
+  "category_font_size": 38,
+  "category_color": "#FFFFFF",
+  "category_bg": "#C0392B",
+  "headline_bg": "#FDEDEC",
+  "headline_border_color": "#E74C3C",
+  "headline_font_size": 68,
+  "headline_color": "#922B21",
+  "summary_font_size_max": 60,
+  "summary_font_size_min": 34,
+  "summary_color": "#1C1C1E",
+  "source_font_size": 34,
+  "source_color": "#7F8C8D",
+  "accent_color": "#C0392B"
+}

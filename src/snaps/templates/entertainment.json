@@ -1,0 +1,18 @@
+{
+  "template_name": "entertainment",
+  "layout_type": "entertainment",
+  "width": 1080,
+  "height": 1920,
+  "bg_color": "#FAFAFC",
+  "lead_image_height": 760,
+  "padding": 60,
+  "category_font_size": 38,
+  "category_color": "#FFFFFF",
+  "category_bg": "#8E44AD",
+  "summary_font_size_max": 60,
+  "summary_font_size_min": 34,
+  "summary_color": "#2C3E50",
+  "source_font_size": 34,
+  "source_color": "#9B59B6",
+  "accent_color": "#8E44AD"
+}
