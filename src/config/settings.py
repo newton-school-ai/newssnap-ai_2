@@ -86,6 +86,12 @@ class Settings(BaseSettings):
     SUPPORTED_LANGUAGES: list[str] = ["en", "hi", "ta", "te", "kn"]
     TRANSLATION_TIMEOUT_SECONDS: float = 10.0
 
+    # Trending & Explore
+    TRENDING_WINDOW_HOURS: float = 1.0
+    TRENDING_CACHE_TTL_SECONDS: int = 300  # 5 minutes
+    BREAKING_NEWS_MAX_AGE_MINUTES: int = 30
+    BREAKING_NEWS_VELOCITY_THRESHOLD: float = 0.5  # interactions per minute
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @model_validator(mode="after")

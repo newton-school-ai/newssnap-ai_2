@@ -45,7 +45,7 @@
 | 17 | Build personalized feed API with pagination and filtering | m5, infra | Todo |
 | 18 | Build Meilisearch integration for multi-language search | m5, search | Todo |
 | 19 | Build interaction system for like, comment, share, and bookmark | m5, infra | Todo |
-| 20 | Build trending and category APIs with breaking news support | m5, recommendation | Todo |
+| 20 | Build trending and category APIs with breaking news support | m5, recommendation | Done |
 
 ## M6: Recommendation Engine (4 issues)
 
