@@ -23,7 +23,39 @@ logger = logging.getLogger(__name__)
 _async_scheduler: Optional[AsyncIOScheduler] = None
 _bg_scheduler: Optional[BackgroundScheduler] = None
 SCRAPE_JOB_ID = "periodic_news_scrape_job"
+TRENDING_JOB_ID = "periodic_trending_refresh_job"
 DEFAULT_INTERVAL_MINUTES = 10
+DEFAULT_TRENDING_INTERVAL_MINUTES = 5
+
+
+def _run_trending_sync():
+    """Sync wrapper to refresh trending caches."""
+    try:
+        from src.config.database import SessionLocal
+        from src.recommendation.trending import refresh_all_trending_caches
+
+        db = SessionLocal()
+        try:
+            refresh_all_trending_caches(db)
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Error executing scheduled trending cache refresh: {e}", exc_info=True)
+
+
+async def _run_trending_async():
+    """Async wrapper to refresh trending caches."""
+    try:
+        from src.config.database import SessionLocal
+        from src.recommendation.trending import refresh_all_trending_caches
+
+        db = SessionLocal()
+        try:
+            refresh_all_trending_caches(db)
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Error executing scheduled trending cache refresh: {e}", exc_info=True)
 
 
 def _run_scrape_sync():
@@ -51,11 +83,13 @@ async def _run_scrape_async():
 def create_scheduler(
     interval_minutes: int = DEFAULT_INTERVAL_MINUTES,
     async_mode: bool = True,
+    trending_interval_minutes: int = DEFAULT_TRENDING_INTERVAL_MINUTES,
 ) -> AsyncIOScheduler | BackgroundScheduler:
     """Create and configure an APScheduler instance for the 10-minute scraping cycle."""
     global _async_scheduler, _bg_scheduler
 
     trigger = IntervalTrigger(minutes=interval_minutes)
+    trending_trigger = IntervalTrigger(minutes=trending_interval_minutes)
 
     if async_mode:
         if _async_scheduler is None:
@@ -63,11 +97,21 @@ def create_scheduler(
         # Remove existing job if any
         if _async_scheduler.get_job(SCRAPE_JOB_ID):
             _async_scheduler.remove_job(SCRAPE_JOB_ID)
+        if _async_scheduler.get_job(TRENDING_JOB_ID):
+            _async_scheduler.remove_job(TRENDING_JOB_ID)
+
         _async_scheduler.add_job(
             _run_scrape_async,
             trigger=trigger,
             id=SCRAPE_JOB_ID,
             name="News Scrape Pipeline (Every 10 mins)",
+            replace_existing=True,
+        )
+        _async_scheduler.add_job(
+            _run_trending_async,
+            trigger=trending_trigger,
+            id=TRENDING_JOB_ID,
+            name="Trending & Explore Cache Refresh (Every 5 mins)",
             replace_existing=True,
         )
         return _async_scheduler
@@ -76,11 +120,21 @@ def create_scheduler(
             _bg_scheduler = BackgroundScheduler()
         if _bg_scheduler.get_job(SCRAPE_JOB_ID):
             _bg_scheduler.remove_job(SCRAPE_JOB_ID)
+        if _bg_scheduler.get_job(TRENDING_JOB_ID):
+            _bg_scheduler.remove_job(TRENDING_JOB_ID)
+
         _bg_scheduler.add_job(
             _run_scrape_sync,
             trigger=trigger,
             id=SCRAPE_JOB_ID,
             name="News Scrape Pipeline (Every 10 mins)",
+            replace_existing=True,
+        )
+        _bg_scheduler.add_job(
+            _run_trending_sync,
+            trigger=trending_trigger,
+            id=TRENDING_JOB_ID,
+            name="Trending & Explore Cache Refresh (Every 5 mins)",
             replace_existing=True,
         )
         return _bg_scheduler
