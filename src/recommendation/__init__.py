@@ -19,6 +19,22 @@ from src.recommendation.content_based import (
     cosine_similarity,
     normalize_category_name,
 )
+from src.recommendation.diversity import (
+    DEFAULT_DIVERSITY_RATIO,
+    DEFAULT_MAX_CATEGORY_SHARE,
+    DiversityInjector,
+    DiversityMetrics,
+    calculate_category_distribution,
+    extract_item_category,
+    extract_item_id,
+)
+from src.recommendation.engine import (
+    DEFAULT_HYBRID_WEIGHTS,
+    DEFAULT_RECENCY_HALF_LIFE_HOURS,
+    RecommendationEngine,
+    compute_recency_decay,
+    normalize_hybrid_weights,
+)
 from src.recommendation.signals import (
     DEFAULT_HALF_LIFE_DAYS,
     DEFAULT_SIGNAL_WEIGHTS,
@@ -38,6 +54,18 @@ __all__ = [
     "InteractionMatrixResult",
     "build_interaction_matrix",
     "get_collaborative_recommender",
+    "RecommendationEngine",
+    "DEFAULT_HYBRID_WEIGHTS",
+    "DEFAULT_RECENCY_HALF_LIFE_HOURS",
+    "compute_recency_decay",
+    "normalize_hybrid_weights",
+    "DiversityInjector",
+    "DiversityMetrics",
+    "DEFAULT_DIVERSITY_RATIO",
+    "DEFAULT_MAX_CATEGORY_SHARE",
+    "calculate_category_distribution",
+    "extract_item_category",
+    "extract_item_id",
     "DEFAULT_CF_SIGNAL_WEIGHTS",
     "DEFAULT_RETRAIN_INTERVAL_HOURS",
     "SignalProcessor",
