@@ -1,5 +1,13 @@
 """NewsSnap AI - Recommendation Engine Module."""
 
+from src.recommendation.collaborative import (
+    DEFAULT_CF_SIGNAL_WEIGHTS,
+    DEFAULT_RETRAIN_INTERVAL_HOURS,
+    CollaborativeRecommender,
+    InteractionMatrixResult,
+    build_interaction_matrix,
+    get_collaborative_recommender,
+)
 from src.recommendation.content_based import (
     ALL_CATEGORIES,
     COLD_START_THRESHOLD,
@@ -26,6 +34,12 @@ __all__ = [
     "ContentBasedRecommender",
     "UserProfile",
     "CategoryAffinityTracker",
+    "CollaborativeRecommender",
+    "InteractionMatrixResult",
+    "build_interaction_matrix",
+    "get_collaborative_recommender",
+    "DEFAULT_CF_SIGNAL_WEIGHTS",
+    "DEFAULT_RETRAIN_INTERVAL_HOURS",
     "SignalProcessor",
     "InteractionSignal",
     "InteractionType",
