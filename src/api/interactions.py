@@ -25,6 +25,7 @@ from src.config.database import get_db
 from src.models.article import Article
 from src.models.interaction import Comment, Interaction, InteractionType
 from src.models.user import User
+from src.utils.cache import invalidate_feed_cache
 
 logger = logging.getLogger(__name__)
 
@@ -115,6 +116,7 @@ def toggle_like(
     if existing_like:
         db.delete(existing_like)
         db.commit()
+        invalidate_feed_cache(str(current_user.id))
         counts = _get_article_counts(db, article.id)
         return {
             "status": "unliked",
@@ -130,6 +132,7 @@ def toggle_like(
         )
         db.add(new_like)
         db.commit()
+        invalidate_feed_cache(str(current_user.id))
         counts = _get_article_counts(db, article.id)
         return {
             "status": "liked",
@@ -164,6 +167,7 @@ def toggle_bookmark(
     if existing_bookmark:
         db.delete(existing_bookmark)
         db.commit()
+        invalidate_feed_cache(str(current_user.id))
         counts = _get_article_counts(db, article.id)
         return {
             "status": "unbookmarked",
@@ -179,6 +183,7 @@ def toggle_bookmark(
         )
         db.add(new_bookmark)
         db.commit()
+        invalidate_feed_cache(str(current_user.id))
         counts = _get_article_counts(db, article.id)
         return {
             "status": "bookmarked",
@@ -205,6 +210,7 @@ def track_share(
     )
     db.add(share_event)
     db.commit()
+    invalidate_feed_cache(str(current_user.id))
 
     counts = _get_article_counts(db, article.id)
     return {
@@ -234,6 +240,7 @@ def track_read(
     )
     db.add(read_event)
     db.commit()
+    invalidate_feed_cache(str(current_user.id))
 
     counts = _get_article_counts(db, article.id)
     return {

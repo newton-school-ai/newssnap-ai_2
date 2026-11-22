@@ -25,9 +25,50 @@ _bg_scheduler: Optional[BackgroundScheduler] = None
 SCRAPE_JOB_ID = "periodic_news_scrape_job"
 TRENDING_JOB_ID = "periodic_trending_refresh_job"
 COLLABORATIVE_RETRAIN_JOB_ID = "periodic_collaborative_retrain_job"
+RECOMMENDATION_REFRESH_JOB_ID = "periodic_recommendation_refresh_job"
 DEFAULT_INTERVAL_MINUTES = 10
 DEFAULT_TRENDING_INTERVAL_MINUTES = 5
 DEFAULT_RETRAIN_INTERVAL_HOURS = 6
+DEFAULT_RECOMMENDATION_REFRESH_INTERVAL_MINUTES = 30
+
+
+def _run_recommendation_refresh_sync():
+    """Sync wrapper to refresh and precompute recommendation feeds for active users."""
+    try:
+        from src.config.database import SessionLocal
+        from src.recommendation.refresh import refresh_user_feeds
+
+        db = SessionLocal()
+        try:
+            result = refresh_user_feeds(db)
+            logger.info(
+                f"Scheduled recommendation refresh completed: {result.get('total_users', 0)} users, "
+                f"{result.get('feeds_cached', 0)} feeds cached in {result.get('duration_seconds', 0.0):.2f}s"
+            )
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Error executing scheduled recommendation refresh: {e}", exc_info=True)
+
+
+async def _run_recommendation_refresh_async():
+    """Async wrapper to refresh and precompute recommendation feeds for active users."""
+    try:
+        from src.config.database import SessionLocal
+        from src.recommendation.refresh import refresh_user_feeds
+
+        db = SessionLocal()
+        try:
+            loop = asyncio.get_running_loop()
+            result = await loop.run_in_executor(None, refresh_user_feeds, db)
+            logger.info(
+                f"Scheduled async recommendation refresh completed: {result.get('total_users', 0)} users, "
+                f"{result.get('feeds_cached', 0)} feeds cached in {result.get('duration_seconds', 0.0):.2f}s"
+            )
+        finally:
+            db.close()
+    except Exception as e:
+        logger.error(f"Error executing scheduled recommendation refresh: {e}", exc_info=True)
 
 
 def _run_collaborative_retrain_sync():
@@ -122,13 +163,15 @@ def create_scheduler(
     async_mode: bool = True,
     trending_interval_minutes: int = DEFAULT_TRENDING_INTERVAL_MINUTES,
     retrain_interval_hours: int = DEFAULT_RETRAIN_INTERVAL_HOURS,
+    recommendation_interval_minutes: int = DEFAULT_RECOMMENDATION_REFRESH_INTERVAL_MINUTES,
 ) -> AsyncIOScheduler | BackgroundScheduler:
-    """Create and configure an APScheduler instance for the scraping, trending, and CF retrain cycles."""
+    """Create and configure an APScheduler instance for scraping, trending, CF retrain, and recommendation refresh."""
     global _async_scheduler, _bg_scheduler
 
     trigger = IntervalTrigger(minutes=interval_minutes)
     trending_trigger = IntervalTrigger(minutes=trending_interval_minutes)
     retrain_trigger = IntervalTrigger(hours=retrain_interval_hours)
+    recommendation_trigger = IntervalTrigger(minutes=recommendation_interval_minutes)
 
     if async_mode:
         if _async_scheduler is None:
@@ -140,6 +183,8 @@ def create_scheduler(
             _async_scheduler.remove_job(TRENDING_JOB_ID)
         if _async_scheduler.get_job(COLLABORATIVE_RETRAIN_JOB_ID):
             _async_scheduler.remove_job(COLLABORATIVE_RETRAIN_JOB_ID)
+        if _async_scheduler.get_job(RECOMMENDATION_REFRESH_JOB_ID):
+            _async_scheduler.remove_job(RECOMMENDATION_REFRESH_JOB_ID)
 
         _async_scheduler.add_job(
             _run_scrape_async,
@@ -162,6 +207,13 @@ def create_scheduler(
             name="Collaborative Filtering ALS Retrain (Every 6 hours)",
             replace_existing=True,
         )
+        _async_scheduler.add_job(
+            _run_recommendation_refresh_async,
+            trigger=recommendation_trigger,
+            id=RECOMMENDATION_REFRESH_JOB_ID,
+            name="Recommendation Feed Precompute Refresh (Every 30 mins)",
+            replace_existing=True,
+        )
         return _async_scheduler
     else:
         if _bg_scheduler is None:
@@ -172,6 +224,8 @@ def create_scheduler(
             _bg_scheduler.remove_job(TRENDING_JOB_ID)
         if _bg_scheduler.get_job(COLLABORATIVE_RETRAIN_JOB_ID):
             _bg_scheduler.remove_job(COLLABORATIVE_RETRAIN_JOB_ID)
+        if _bg_scheduler.get_job(RECOMMENDATION_REFRESH_JOB_ID):
+            _bg_scheduler.remove_job(RECOMMENDATION_REFRESH_JOB_ID)
 
         _bg_scheduler.add_job(
             _run_scrape_sync,
@@ -192,6 +246,13 @@ def create_scheduler(
             trigger=retrain_trigger,
             id=COLLABORATIVE_RETRAIN_JOB_ID,
             name="Collaborative Filtering ALS Retrain (Every 6 hours)",
+            replace_existing=True,
+        )
+        _bg_scheduler.add_job(
+            _run_recommendation_refresh_sync,
+            trigger=recommendation_trigger,
+            id=RECOMMENDATION_REFRESH_JOB_ID,
+            name="Recommendation Feed Precompute Refresh (Every 30 mins)",
             replace_existing=True,
         )
         return _bg_scheduler
@@ -247,3 +308,17 @@ async def trigger_scrape_now() -> Dict[str, Any]:
     """Manually trigger a scrape cycle immediately."""
     logger.info("Manual scrape cycle triggered.")
     return await pipeline_instance.run_scrape_cycle()
+
+
+async def trigger_recommendation_refresh_now() -> Dict[str, Any]:
+    """Manually trigger a recommendation feed refresh cycle immediately."""
+    logger.info("Manual recommendation refresh triggered.")
+    from src.config.database import SessionLocal
+    from src.recommendation.refresh import refresh_user_feeds
+
+    db = SessionLocal()
+    try:
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, refresh_user_feeds, db)
+    finally:
+        db.close()

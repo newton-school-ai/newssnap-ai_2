@@ -1,5 +1,13 @@
 """NewsSnap AI - Recommendation Engine Module."""
 
+from src.recommendation.ab_testing import (
+    ABTestManager,
+    Experiment,
+    ExperimentStatus,
+    Variant,
+    VariantAssignment,
+    get_ab_test_manager,
+)
 from src.recommendation.collaborative import (
     DEFAULT_CF_SIGNAL_WEIGHTS,
     DEFAULT_RETRAIN_INTERVAL_HOURS,
@@ -35,6 +43,19 @@ from src.recommendation.engine import (
     compute_recency_decay,
     normalize_hybrid_weights,
 )
+from src.recommendation.metrics import (
+    ExperimentSummary,
+    MetricsTracker,
+    VariantMetrics,
+    get_metrics_tracker,
+)
+from src.recommendation.refresh import (
+    DEFAULT_FEED_CACHE_TTL_SECONDS,
+    DEFAULT_PRECOMPUTE_LIMIT,
+    get_active_users,
+    precompute_single_user_feed,
+    refresh_user_feeds,
+)
 from src.recommendation.signals import (
     DEFAULT_HALF_LIFE_DAYS,
     DEFAULT_SIGNAL_WEIGHTS,
@@ -66,6 +87,21 @@ __all__ = [
     "calculate_category_distribution",
     "extract_item_category",
     "extract_item_id",
+    "ABTestManager",
+    "Experiment",
+    "Variant",
+    "VariantAssignment",
+    "ExperimentStatus",
+    "get_ab_test_manager",
+    "MetricsTracker",
+    "VariantMetrics",
+    "ExperimentSummary",
+    "get_metrics_tracker",
+    "refresh_user_feeds",
+    "precompute_single_user_feed",
+    "get_active_users",
+    "DEFAULT_FEED_CACHE_TTL_SECONDS",
+    "DEFAULT_PRECOMPUTE_LIMIT",
     "DEFAULT_CF_SIGNAL_WEIGHTS",
     "DEFAULT_RETRAIN_INTERVAL_HOURS",
     "SignalProcessor",

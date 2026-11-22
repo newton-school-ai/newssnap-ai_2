@@ -24,6 +24,7 @@ from src.config.database import get_db
 from src.models.article import Article
 from src.models.interaction import Comment
 from src.models.user import User
+from src.utils.cache import invalidate_feed_cache
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +113,7 @@ def create_comment(
     db.add(new_comment)
     db.commit()
     db.refresh(new_comment)
+    invalidate_feed_cache(str(current_user.id))
 
     return {
         "id": str(new_comment.id),
@@ -210,6 +212,7 @@ def _delete_comment_logic(
 
     db.delete(comment)
     db.commit()
+    invalidate_feed_cache(str(current_user.id))
 
     return {
         "status": "deleted",
