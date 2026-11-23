@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "NewsSnap AI",
+    "slug": "newssnap-ai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "scheme": "newssnap",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.newssnap.ai"
+    },
+    "android": {
+      "package": "com.newssnap.ai",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "apiBaseUrl": "http://localhost:8000"
+    }
+  }
+}
+
